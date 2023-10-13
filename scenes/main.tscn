@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cs5hn2w4mg6aa"]
+[gd_scene load_steps=8 format=3 uid="uid://cs5hn2w4mg6aa"]
 
 [ext_resource type="Script" path="res://src/main.gd" id="1_wojbp"]
 [ext_resource type="Resource" uid="uid://cvlnn6vem6qc0" path="res://assets/data/grid.tres" id="2_ykrc7"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bmhal25v506pn" path="res://scenes/snake_segment.tscn" id="3_7g51d"]
 [ext_resource type="Texture2D" uid="uid://csa7nstjiqvo5" path="res://assets/sprites/bg.png" id="3_y1050"]
 [ext_resource type="PackedScene" uid="uid://dd2qo53w4iqle" path="res://scenes/hud.tscn" id="5_deu4h"]
+[ext_resource type="PackedScene" uid="uid://crj2ixrtpkf48" path="res://scenes/food.tscn" id="7_ql1ot"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_wojbp")
@@ -26,5 +27,8 @@ bus = &"Music"
 [node name="MoveTimer" type="Timer" parent="."]
 wait_time = 0.1
 
+[node name="Food" parent="." instance=ExtResource("7_ql1ot")]
+
+[connection signal="food_eaten" from="." to="HUD" method="_on_main_food_eaten"]
 [connection signal="reset_game" from="." to="HUD" method="_on_main_reset_game"]
 [connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

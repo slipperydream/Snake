@@ -1,16 +1,22 @@
 extends Node
 
+signal reset_game
+signal game_over
+signal food_eaten
+
 @export var grid : Resource = null
 @export var snake_scene : PackedScene
 
 var score : int
 var game_started : bool = false
-signal reset_game
 
 # snake variables
 var old_data : Array
 var snake_data : Array
 var snake : Array
+
+var regen_food : bool = true
+var food_pos : Vector2
 
 # movement variables
 @export var start_pos = Vector2(9,9)
@@ -34,6 +40,7 @@ func new_game():
 	move_direction = up
 	can_move = true
 	generate_snake()
+	move_food()
 
 func generate_snake():
 	old_data.clear()
@@ -88,4 +95,38 @@ func _on_move_timer_timeout():
 		if i > 0:
 			snake_data[i] = old_data[i - 1]
 		snake[i].position = (snake_data[i] * grid.cell_size) + Vector2(0, grid.cell_size)
+	
+	check_out_of_bounds()
+	check_self_eaten()
+	check_food_eaten()
+	
+func check_out_of_bounds():
+	if snake_data[0].x < 0 or snake_data[0].x > grid.cells - 1 or snake_data[0].y < 0 or snake_data[0].y > grid.cells - 1:
+		end_game()
 		
+func check_self_eaten():
+	for i in range(1, len(snake_data)):
+		if snake_data[0] == snake_data[i]:
+			end_game()
+	
+func move_food():
+	while regen_food:
+		regen_food = false
+		food_pos = Vector2(randi_range(0, grid.cells -1), randi_range(0, grid.cells -1))
+		for i in snake_data:
+			if food_pos == i:
+				regen_food = true
+	
+	$Food.position = (food_pos * grid.cell_size) + Vector2(0, grid.cell_size)
+	regen_food = true
+	
+func check_food_eaten():
+	if snake_data[0] == food_pos:
+		emit_signal("food_eaten", 1)
+		add_segment(old_data[-1])
+		move_food()
+
+func end_game():
+	emit_signal("game_over")
+	await get_tree().create_timer(1).timeout
+	get_tree().quit()
