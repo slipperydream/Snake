@@ -1,0 +1,8 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cvlnn6vem6qc0"]
+
+[ext_resource type="Script" path="res://src/grid.gd" id="1_mxgjh"]
+
+[resource]
+script = ExtResource("1_mxgjh")
+cells = 20
+cell_size = 50
