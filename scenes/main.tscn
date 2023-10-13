@@ -23,4 +23,8 @@ bus = &"Music"
 
 [node name="HUD" parent="." instance=ExtResource("5_deu4h")]
 
+[node name="MoveTimer" type="Timer" parent="."]
+wait_time = 0.1
+
 [connection signal="reset_game" from="." to="HUD" method="_on_main_reset_game"]
+[connection signal="timeout" from="MoveTimer" to="." method="_on_move_timer_timeout"]

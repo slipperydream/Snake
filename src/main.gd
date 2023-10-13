@@ -27,7 +27,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	move_snake()
 
 func new_game():
 	emit_signal("reset_game")
@@ -50,3 +50,42 @@ func add_segment(pos):
 	SnakeSegment.position = (pos * grid.cell_size) + Vector2(0, grid.cell_size)
 	add_child(SnakeSegment)
 	snake.append(SnakeSegment)
+
+func move_snake():
+	if can_move:
+		if Input.is_action_just_pressed("move_down") and move_direction != up:
+			move_direction = down
+			can_move = false
+			if game_started == false:
+				start_game()
+		if Input.is_action_just_pressed("move_up") and move_direction != down:
+			move_direction = up
+			can_move = false
+			if game_started == false:
+				start_game()
+		if Input.is_action_just_pressed("move_left") and move_direction != right:
+			move_direction = left
+			can_move = false
+			if game_started == false:
+				start_game()
+		if Input.is_action_just_pressed("move_right") and move_direction != left:
+			move_direction = right
+			can_move = false
+			if game_started == false:
+				start_game()
+				
+func start_game():
+	game_started = true
+	$MoveTimer.start()
+
+func _on_move_timer_timeout():
+	# allow snake movement
+	can_move = true
+	old_data = [] + snake_data
+	snake_data[0] += move_direction
+	for i in range(len(snake_data)):
+		# move the other segments one by one
+		if i > 0:
+			snake_data[i] = old_data[i - 1]
+		snake[i].position = (snake_data[i] * grid.cell_size) + Vector2(0, grid.cell_size)
+		
