@@ -1,7 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://crj2ixrtpkf48"]
+[gd_scene load_steps=3 format=3 uid="uid://crj2ixrtpkf48"]
 
 [ext_resource type="Texture2D" uid="uid://eljeu88bqavx" path="res://assets/sprites/apple.png" id="1_yqiv4"]
+[ext_resource type="Script" path="res://src/food.gd" id="2_qvfub"]
 
 [node name="Food" type="Sprite2D"]
 texture = ExtResource("1_yqiv4")
 offset = Vector2(25, 25)
+script = ExtResource("2_qvfub")
+value = 5

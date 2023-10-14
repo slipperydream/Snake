@@ -1,6 +1,6 @@
 extends Node
 
-signal reset_game
+signal reset_score
 signal game_over
 signal food_eaten
 
@@ -29,6 +29,7 @@ var can_move : bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	$GameOverMenu.hide()
 	new_game()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -36,7 +37,11 @@ func _process(delta):
 	move_snake()
 
 func new_game():
-	emit_signal("reset_game")
+	get_tree().paused = false
+	get_tree().call_group("segments", "queue_free")
+	if $GameOverMenu.visible:
+		$GameOverMenu.hide()
+	emit_signal("reset_score")
 	move_direction = up
 	can_move = true
 	generate_snake()
@@ -122,11 +127,25 @@ func move_food():
 	
 func check_food_eaten():
 	if snake_data[0] == food_pos:
-		emit_signal("food_eaten", 1)
-		add_segment(old_data[-1])
+		emit_signal("food_eaten", $Food.value)
+		if $Food.enbiggen == true:
+			for i in range(3):
+				add_segment(old_data[-1])
+		else:
+			add_segment(old_data[-1])
 		move_food()
 
 func end_game():
 	emit_signal("game_over")
+	$MoveTimer.stop()
+	game_started = false
+	$GameOverMenu.show()
+	get_tree().paused = true
+		
+
+func _on_game_over_menu_restart_game():
+	new_game()
+
+func _on_game_over_menu_quit_game():
 	await get_tree().create_timer(1).timeout
 	get_tree().quit()
